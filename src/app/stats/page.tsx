@@ -47,16 +47,10 @@ const PRESETS = [
     description: 'À coller sur la vitrine ou la porte d\'entrée du magasin',
   },
   {
-    id: 'card_ammar',
-    label: '💼 Carte de Visite — M. Ammar',
-    tag: 'card_ammar',
-    description: 'QR Code ou NFC pour la carte de visite de M. Ammar',
-  },
-  {
-    id: 'card_fstouh',
-    label: '💼 Carte de Visite — M. Fstouh',
-    tag: 'card_fstouh',
-    description: 'QR Code ou NFC pour la carte de visite de M. Fstouh',
+    id: 'business_card',
+    label: '💼 Carte de Visite (Business Card QR/NFC)',
+    tag: 'business_card',
+    description: 'QR Code ou NFC pour la carte de visite officielle Royal Ink',
   },
   {
     id: 'instagram',

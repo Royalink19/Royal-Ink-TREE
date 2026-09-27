@@ -46,15 +46,8 @@ const DEFAULT_TOUCHPOINTS: AnalyticsRecord['sources'] = {
     clicks: 0,
     lastActive: null,
   },
-  card_ammar: {
-    label: 'Business Card (Mr. Ammar)',
-    category: 'card',
-    views: 0,
-    clicks: 0,
-    lastActive: null,
-  },
-  card_fstouh: {
-    label: 'Business Card (Mr. Fstouh)',
+  business_card: {
+    label: 'Carte de Visite (Business Card)',
     category: 'card',
     views: 0,
     clicks: 0,
