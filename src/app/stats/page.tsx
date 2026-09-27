@@ -13,70 +13,119 @@ import {
   RefreshCw,
   Trash2,
   TrendingUp,
-  Users,
   MousePointerClick,
   Sparkles,
   ArrowLeft,
   ExternalLink,
   Store,
   Eye,
-  CreditCard,
-  Phone,
   Radio,
+  Link2,
+  MapPin,
+  Smartphone,
+  Layers,
+  Globe,
 } from 'lucide-react';
 import type { AnalyticsRecord } from '@/lib/analytics-storage';
 
-// Known Presets for Touchpoint QR Generation
-const PRESETS = [
+interface TouchpointPreset {
+  id: string;
+  tag: string;
+  titleAr: string;
+  titleFr: string;
+  category: 'physical' | 'card' | 'social';
+  categoryAr: string;
+  placementAr: string;
+  placementFr: string;
+  icon: string;
+}
+
+// Known Presets for Touchpoint Links & QR Generation
+const PRESETS: TouchpointPreset[] = [
   {
     id: 'stand_qr',
-    label: '🏪 Stand de Comptoir (Desk Stand QR)',
     tag: 'stand_qr',
-    description: 'À imprimer sur le support plexiglass du comptoir / réception',
+    titleAr: 'ستاند طاولة الاستقبال (Desk Stand QR)',
+    titleFr: 'Stand de Comptoir / Réception',
+    category: 'physical',
+    categoryAr: 'منفذ فيزيائي بالمحل',
+    placementAr: 'يُطبع كرمز QR ويوضع على حامل الأكريليك/الستاند فوق مكتب الاستقبال أو كاونتر البيع.',
+    placementFr: 'À imprimer sur le support plexiglass du comptoir / réception dans le showroom.',
+    icon: '🏪',
   },
   {
     id: 'stand_nfc',
-    label: '📲 Stand NFC Tap URL',
     tag: 'stand_nfc',
-    description: 'À programmer dans la puce NFC du stand de présentation',
+    titleAr: 'ستاند الشريحة الذكية (Stand NFC Tap URL)',
+    titleFr: 'Puce NFC du Stand de Comptoir',
+    category: 'physical',
+    categoryAr: 'منفذ فيزيائي بالمحل',
+    placementAr: 'يُبرمج داخل شريحة الـ NFC المدمجة في الستاند للمس السريع بالهاتف دون الحاجة للكاميرا.',
+    placementFr: 'À programmer via application NFC Tools dans la puce NFC du stand de comptoir.',
+    icon: '📲',
   },
   {
     id: 'glass_front',
-    label: '🪟 Vitrine / Façade Magasin (Glass Sticker QR)',
     tag: 'glass_front',
-    description: 'À coller sur la vitrine ou la porte d\'entrée du magasin',
+    titleAr: 'واجهة المحل والزجاج الخارجي (Glass Window QR)',
+    titleFr: 'Vitrine / Porte d\'Entrée Magasin',
+    category: 'physical',
+    categoryAr: 'منفذ فيزيائي بالمحل',
+    placementAr: 'يُطبع كملصق ستيكر مقاوم للشمس ويوضع على باب المحل أو الواجهة الزجاجية المطلة على السوق للزبائن أثناء الدخول أو عند الإغلاق.',
+    placementFr: 'À coller sous forme d\'autocollant sur la vitrine ou la porte en verre du magasin.',
+    icon: '🪟',
   },
   {
     id: 'business_card',
-    label: '💼 Carte de Visite (Business Card QR/NFC)',
     tag: 'business_card',
-    description: 'QR Code ou NFC pour la carte de visite officielle Royal Ink',
+    titleAr: 'بطاقة العمل الرسمية (Carte de Visite QR/NFC)',
+    titleFr: 'Carte de Visite Officielle',
+    category: 'card',
+    categoryAr: 'بطاقة عمل موحدة',
+    placementAr: 'يُطبع في ظهر بطاقة العمل الرسمية الموحدة لشركة Royal Ink أو يُبرمج في شريحة الـ NFC الخاصة بالكارت.',
+    placementFr: 'À imprimer au dos de la carte de visite officielle ou programmer dans la puce NFC de la carte.',
+    icon: '💼',
   },
   {
     id: 'instagram',
-    label: '📸 Lien Bio Instagram',
     tag: 'instagram',
-    description: 'Lien direct à mettre dans la bio du compte Instagram officiel',
+    titleAr: 'رابط البايو إنستغرام (Instagram Bio Link)',
+    titleFr: 'Lien Bio Instagram',
+    category: 'social',
+    categoryAr: 'شبكات التواصل',
+    placementAr: 'يوضع في حقل الرابط (Website / Link in Bio) في صفحة الإنستغرام الرسمية لرويال إنك.',
+    placementFr: 'À coller directement dans le champ "Site web" de la bio du compte Instagram officiel.',
+    icon: '📸',
   },
   {
     id: 'facebook',
-    label: '🔵 Lien Page Facebook',
     tag: 'facebook',
-    description: 'Lien pour le bouton d\'action ou publications Facebook',
+    titleAr: 'زر صفحة الفيسبوك (Facebook Page Action)',
+    titleFr: 'Bouton Page Facebook',
+    category: 'social',
+    categoryAr: 'شبكات التواصل',
+    placementAr: 'يوضع في زر الإجراء الرئيسي للصفحة (Call to Action Button) أو في المنشور المثبت بالأعلى.',
+    placementFr: 'À configurer sur le bouton principal "Visiter le site web" ou post épinglé Facebook.',
+    icon: '🔵',
   },
   {
     id: 'tiktok',
-    label: '🎵 Lien Bio TikTok',
     tag: 'tiktok',
-    description: 'Lien pour la bio du profil TikTok',
+    titleAr: 'رابط البايو تيك توك (TikTok Bio Link)',
+    titleFr: 'Lien Bio TikTok',
+    category: 'social',
+    categoryAr: 'شبكات التواصل',
+    placementAr: 'يوضع في رابط البايو التعريفي لحساب تيك توك الرسمي.',
+    placementFr: 'À coller dans le champ "Site web" de la biographie du compte TikTok.',
+    icon: '🎵',
   },
 ];
 
 export default function StatsDashboard() {
   const [data, setData] = useState<AnalyticsRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'qrs'>('analytics');
+  const [copiedTag, setCopiedTag] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'analytics' | 'links' | 'qrs'>('links');
 
   // QR Generator State
   const [selectedPreset, setSelectedPreset] = useState(PRESETS[0].tag);
@@ -84,7 +133,6 @@ export default function StatsDashboard() {
   const [domain, setDomain] = useState('');
   const [qrColorStyle, setQrColorStyle] = useState<'bw' | 'royal'>('bw');
   const [qrDataUrl, setQrDataUrl] = useState('');
-  const qrCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // Initialize domain on client
   useEffect(() => {
@@ -111,14 +159,14 @@ export default function StatsDashboard() {
 
   useEffect(() => {
     fetchStats();
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
   }, [fetchStats]);
 
   // Compute Active Tag and URL
   const activeTag = selectedPreset === 'custom' ? customTag || 'custom' : selectedPreset;
-  const targetUrl = `${domain || 'https://royal-ink.com'}/connect?source=${encodeURIComponent(activeTag)}`;
+  const currentBaseDomain = domain.trim() || 'https://royal-ink.com';
+  const targetUrl = `${currentBaseDomain}/connect?source=${encodeURIComponent(activeTag)}`;
 
   // Generate QR Code
   useEffect(() => {
@@ -140,11 +188,17 @@ export default function StatsDashboard() {
       .catch((err) => console.error(err));
   }, [targetUrl, qrColorStyle]);
 
-  // Copy URL
-  const handleCopy = () => {
-    navigator.clipboard.writeText(targetUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  // Copy individual Link
+  const handleCopyLink = (urlToCopy: string, tagId: string) => {
+    navigator.clipboard.writeText(urlToCopy);
+    setCopiedTag(tagId);
+    setTimeout(() => setCopiedTag(null), 2500);
+  };
+
+  // Switch to QR Tab with specified preset
+  const handleOpenQRForTag = (tag: string) => {
+    setSelectedPreset(tag);
+    setActiveTab('qrs');
   };
 
   // Download QR Code PNG
@@ -180,12 +234,13 @@ export default function StatsDashboard() {
   const sortedSources = data?.sources
     ? Object.entries(data.sources).sort((a, b) => b[1].views - a[1].views)
     : [];
-  const topChannel = sortedSources.length > 0 && sortedSources[0][1].views > 0
-    ? sortedSources[0][1].label
-    : 'En attente de scans';
+  const topChannel =
+    sortedSources.length > 0 && sortedSources[0][1].views > 0
+      ? sortedSources[0][1].label
+      : 'En attente de scans';
 
   return (
-    <div className="min-h-screen bg-[#0a0a09] text-white selection:bg-[#e30b17] selection:text-white pb-16">
+    <div className="min-h-screen bg-[#0a0a09] text-white selection:bg-[#e30b17] selection:text-white pb-20">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-[#121211]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -200,7 +255,7 @@ export default function StatsDashboard() {
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#e30b17] animate-pulse" />
             <h1 className="text-sm sm:text-base font-bold tracking-tight">
-              Royal Ink <span className="text-[#e30b17]">Analytics & QR Studio</span>
+              Royal Ink <span className="text-[#e30b17]">Analytics & Links Hub</span>
             </h1>
           </div>
         </div>
@@ -211,7 +266,7 @@ export default function StatsDashboard() {
             onClick={fetchStats}
             disabled={loading}
             className="flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 active:scale-95 text-white/80 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 transition-all"
-            title="Rafraîchir"
+            title="تحديث الإحصائيات"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#e30b17]' : ''}`} />
             <span className="hidden sm:inline">تحديث</span>
@@ -221,7 +276,7 @@ export default function StatsDashboard() {
           <button
             onClick={handleReset}
             className="flex items-center gap-1.5 text-xs bg-red-950/40 hover:bg-red-900/60 active:scale-95 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-red-500/20 transition-all"
-            title="Réinitialiser"
+            title="تصفير الأرقام"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">تصفير</span>
@@ -232,40 +287,172 @@ export default function StatsDashboard() {
       {/* Main Container */}
       <main className="max-w-6xl mx-auto px-4 sm:px-8 pt-6">
         {/* Navigation Tabs */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 mb-6 gap-3">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+            {/* Tab 1: Ready-to-use Links */}
+            <button
+              onClick={() => setActiveTab('links')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+                activeTab === 'links'
+                  ? 'bg-[#e30b17] text-white shadow-lg shadow-red-900/30'
+                  : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Link2 className="w-4 h-4" />
+              <span>📋 روابط المنافذ السريعة (Links & Copy)</span>
+            </button>
+
+            {/* Tab 2: Live Analytics */}
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
                 activeTab === 'analytics'
-                  ? 'bg-[#e30b17] text-white shadow-lg shadow-red-900/20'
+                  ? 'bg-[#e30b17] text-white shadow-lg shadow-red-900/30'
                   : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
               }`}
             >
               <BarChart3 className="w-4 h-4" />
-              <span>الإحصائيات المباشرة (Live Stats)</span>
+              <span>📊 الإحصائيات المباشرة (Live Stats)</span>
             </button>
 
+            {/* Tab 3: QR Studio */}
             <button
               onClick={() => setActiveTab('qrs')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
                 activeTab === 'qrs'
-                  ? 'bg-[#e30b17] text-white shadow-lg shadow-red-900/20'
+                  ? 'bg-[#e30b17] text-white shadow-lg shadow-red-900/30'
                   : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
               }`}
             >
               <QrCode className="w-4 h-4" />
-              <span>استوديو توليد الباركود (QR Generator)</span>
+              <span>🖨️ استوديو الباركود (QR Generator)</span>
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/30 border border-emerald-500/20 px-3 py-1 rounded-full">
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/30 border border-emerald-500/20 px-3 py-1 rounded-full shrink-0">
             <Radio className="w-3 h-3 animate-pulse" />
-            <span>التتبع التلقائي نشط</span>
+            <span>التتبع التلقائي نشط ومحمي</span>
           </div>
         </div>
 
-        {/* ── TAB 1: ANALYTICS DASHBOARD ──────────────────────── */}
+        {/* ════════════════════════════════════════════════════════
+            TAB 1: QUICK READY-TO-USE LINKS & COPY
+        ════════════════════════════════════════════════════════ */}
+        {activeTab === 'links' && (
+          <div className="space-y-6">
+            {/* Domain Setting Banner */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#141413] border border-white/10 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <span className="text-xs font-semibold text-[#e30b17] uppercase tracking-wider flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>دومين الموقع الأساسي (Base Domain):</span>
+                </span>
+                <p className="text-xs text-white/50">
+                  جميع الروابط بالأسفل تتكيف فوراً مع هذا الدومين. يمكنك كتابة أي دومين نهائي هنا:
+                </p>
+              </div>
+
+              <div className="w-full md:w-96">
+                <input
+                  type="text"
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value)}
+                  placeholder="https://royal-ink.com"
+                  className="w-full bg-[#0a0a09] border border-white/20 rounded-xl px-3.5 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#e30b17]"
+                />
+              </div>
+            </div>
+
+            {/* List of Touchpoint Cards */}
+            <div className="space-y-3.5">
+              {PRESETS.map((p) => {
+                const fullUrl = `${currentBaseDomain}/connect?source=${p.tag}`;
+                const isCopied = copiedTag === p.id;
+
+                let categoryStyle = 'bg-red-950/40 text-red-300 border-red-500/20';
+                if (p.category === 'card') categoryStyle = 'bg-amber-950/40 text-amber-300 border-amber-500/20';
+                else if (p.category === 'social') categoryStyle = 'bg-blue-950/40 text-blue-300 border-blue-500/20';
+
+                return (
+                  <div
+                    key={p.id}
+                    className="p-4 sm:p-5 rounded-2xl bg-[#141413] border border-white/10 hover:border-white/20 transition-all shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+                  >
+                    {/* Info Column */}
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-lg">{p.icon}</span>
+                        <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                          {p.titleAr}
+                        </h3>
+                        <span className={`text-[10px] px-2.5 py-0.5 rounded-full border ${categoryStyle}`}>
+                          {p.categoryAr}
+                        </span>
+                      </div>
+
+                      {/* Where to put it */}
+                      <div className="flex items-start gap-1.5 text-xs text-white/70 bg-white/[0.02] p-2.5 rounded-xl border border-white/5">
+                        <MapPin className="w-3.5 h-3.5 text-[#e30b17] shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-semibold text-white/90">أين يوضع هذا الرابط؟ </span>
+                          <span className="text-white/60">{p.placementAr}</span>
+                        </div>
+                      </div>
+
+                      {/* URL Box */}
+                      <div className="mt-2 flex items-center gap-2">
+                        <code className="text-[11px] font-mono text-[#e30b17] bg-[#0a0a09] px-3 py-1.5 rounded-lg border border-white/10 truncate max-w-full block select-all">
+                          {fullUrl}
+                        </code>
+                      </div>
+                    </div>
+
+                    {/* Actions Column */}
+                    <div className="flex sm:flex-row lg:flex-col items-stretch gap-2 shrink-0">
+                      {/* Copy Link Button */}
+                      <button
+                        onClick={() => handleCopyLink(fullUrl, p.id)}
+                        className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 ${
+                          isCopied
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-[#e30b17] hover:bg-[#c90914] text-white shadow-lg shadow-red-900/30'
+                        }`}
+                      >
+                        {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        <span>{isCopied ? 'تم النسخ بنجاح!' : 'نسخ الرابط'}</span>
+                      </button>
+
+                      {/* Open in QR Studio Button */}
+                      <button
+                        onClick={() => handleOpenQRForTag(p.tag)}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 transition-all active:scale-95"
+                      >
+                        <QrCode className="w-3.5 h-3.5" />
+                        <span>توليد الباركود</span>
+                      </button>
+
+                      {/* Live Test */}
+                      <a
+                        href={fullUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] text-white/40 hover:text-white/80 transition-colors"
+                        title="تجربة الرابط في تبويب جديد"
+                      >
+                        <span>اختبار الرابط</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════════════════════════════
+            TAB 2: ANALYTICS DASHBOARD
+        ════════════════════════════════════════════════════════ */}
         {activeTab === 'analytics' && (
           <div className="space-y-6">
             {/* Top 4 KPI Metrics */}
@@ -283,7 +470,7 @@ export default function StatsDashboard() {
                   {totalVisits.toLocaleString()}
                 </div>
                 <div className="text-[11px] text-white/40 mt-1">
-                  من مختلف النقاط (ستاند، واجهة، كروت...)
+                  من مختلف النقاط (ستاند، واجهة، كارت...)
                 </div>
               </div>
 
@@ -336,13 +523,13 @@ export default function StatsDashboard() {
               </div>
             </div>
 
-            {/* Touchpoints Detailed Table (Stand vs Glass vs NFC vs Cards vs Social) */}
+            {/* Touchpoints Detailed Table */}
             <div className="p-5 sm:p-6 rounded-2xl bg-[#141413] border border-white/10 shadow-xl">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
                     <Store className="w-5 h-5 text-[#e30b17]" />
-                    <span>مقارنة المنافذ الفيزيائية والرقمية (Touchpoints Breakdown)</span>
+                    <span>مقارنة أداء المنافذ (Touchpoints Performance)</span>
                   </h2>
                   <p className="text-xs text-white/50 mt-0.5">
                     إحصائيات دقيقة لكل ستاند، واجهة زجاجية، بطاقة عمل، وحساب تواصل
@@ -366,7 +553,6 @@ export default function StatsDashboard() {
                       const share = totalVisits > 0 ? (info.views / totalVisits) * 100 : 0;
                       const conv = info.views > 0 ? ((info.clicks / info.views) * 100).toFixed(0) : '0';
 
-                      // Badge Color
                       let categoryBadge = 'bg-white/5 text-white/60';
                       if (info.category === 'stand') categoryBadge = 'bg-red-950/40 text-red-300 border-red-500/20';
                       else if (info.category === 'glass') categoryBadge = 'bg-blue-950/40 text-blue-300 border-blue-500/20';
@@ -376,7 +562,6 @@ export default function StatsDashboard() {
 
                       return (
                         <tr key={sourceKey} className="hover:bg-white/[0.02] transition-colors">
-                          {/* Label & Tag */}
                           <td className="py-3.5 pr-4">
                             <div className="flex items-center gap-2.5">
                               <span className="font-semibold text-white/90">{info.label}</span>
@@ -386,24 +571,20 @@ export default function StatsDashboard() {
                             </div>
                           </td>
 
-                          {/* Views */}
                           <td className="py-3.5 px-4 text-center font-mono font-bold text-white">
                             {info.views}
                           </td>
 
-                          {/* Clicks */}
                           <td className="py-3.5 px-4 text-center font-mono text-emerald-400">
                             {info.clicks}
                           </td>
 
-                          {/* Conv */}
                           <td className="py-3.5 px-4 text-center">
                             <span className="text-xs px-2 py-0.5 rounded bg-white/5 font-mono text-white/80">
                               {conv}%
                             </span>
                           </td>
 
-                          {/* Share Progress Bar */}
                           <td className="py-3.5 pl-4 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <div className="w-24 sm:w-32 h-1.5 rounded-full bg-white/10 overflow-hidden">
@@ -519,7 +700,9 @@ export default function StatsDashboard() {
           </div>
         )}
 
-        {/* ── TAB 2: QR CODE STUDIO & GENERATOR ────────────────── */}
+        {/* ════════════════════════════════════════════════════════
+            TAB 3: QR CODE STUDIO & GENERATOR
+        ════════════════════════════════════════════════════════ */}
         {activeTab === 'qrs' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left Controls (7 cols) */}
@@ -536,7 +719,7 @@ export default function StatsDashboard() {
                 {/* Preset Touchpoint Selector */}
                 <div className="space-y-3 mb-5">
                   <label className="text-xs font-semibold text-white/70 uppercase">
-                    1. اختر المنفذ الفيزيائي المراد طباعته:
+                    1. اختر المنفذ المراد توليد باركود له:
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {PRESETS.map((p) => {
@@ -552,8 +735,11 @@ export default function StatsDashboard() {
                               : 'bg-white/[0.03] border-white/10 text-white/70 hover:bg-white/[0.06] hover:text-white'
                           }`}
                         >
-                          <div className="font-semibold text-xs leading-tight mb-1">{p.label}</div>
-                          <div className="text-[10px] text-white/40 leading-snug">{p.description}</div>
+                          <div className="font-semibold text-xs leading-tight mb-1 flex items-center gap-1.5">
+                            <span>{p.icon}</span>
+                            <span>{p.titleAr}</span>
+                          </div>
+                          <div className="text-[10px] text-white/40 leading-snug">{p.placementAr}</div>
                         </button>
                       );
                     })}
@@ -659,11 +845,11 @@ export default function StatsDashboard() {
                   </button>
 
                   <button
-                    onClick={handleCopy}
+                    onClick={() => handleCopyLink(targetUrl, 'active_qr')}
                     className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 text-white text-xs font-medium border border-white/10 transition-all"
                   >
-                    {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                    <span>{copied ? 'تم النسخ!' : 'نسخ الرابط'}</span>
+                    {copiedTag === 'active_qr' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    <span>{copiedTag === 'active_qr' ? 'تم النسخ!' : 'نسخ الرابط'}</span>
                   </button>
                 </div>
               </div>
