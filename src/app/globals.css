@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+/* ─── Royal Ink Brand Design System ───────────────────────── */
+
+:root {
+  /* Brand Colors (constant across themes) */
+  --brand-red: #e30b17;
+  --brand-red-dark: #b8090f;
+  --brand-red-light: #ff1a27;
+  --brand-black: #1d1d1b;
+  --brand-black-deep: #0a0a09;
+  --brand-white: #ffffff;
+  --brand-gray-50: #fafafa;
+  --brand-gray-100: #f5f5f5;
+  --brand-gray-200: #e5e5e5;
+  --brand-gray-300: #d4d4d4;
+  --brand-gray-400: #a3a3a3;
+  --brand-gray-500: #737373;
+  --brand-gray-600: #525252;
+  --brand-gray-700: #404040;
+  --brand-gray-800: #262626;
+  --brand-gray-900: #171717;
+}
+
+/* ─── Dark Theme (default) ────────────────────────────────── */
+
+[data-theme="dark"] {
+  --background: var(--brand-black-deep);
+  --foreground: var(--brand-white);
+  --surface: #141413;
+  --surface-elevated: #1c1c1a;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text-primary: var(--brand-white);
+  --text-secondary: var(--brand-white);
+  --text-tertiary: var(--brand-white);
+  --accent: var(--brand-red);
+  --accent-hover: var(--brand-red-light);
+  --accent-glow: rgba(227, 11, 23, 0.15);
+  --accent-glow-subtle: rgba(227, 11, 23, 0.06);
+  --glow-opacity: 0.04;
+  --scrollbar-track: var(--brand-black-deep);
+  --scrollbar-thumb: var(--brand-gray-700);
+  --scrollbar-thumb-hover: var(--brand-gray-600);
+  color-scheme: dark;
+}
+
+/* ─── Light Theme ─────────────────────────────────────────── */
+
+[data-theme="light"] {
+  --background: #f8f8f8;
+  --foreground: var(--brand-black);
+  --surface: var(--brand-white);
+  --surface-elevated: var(--brand-white);
+  --surface-border: rgba(0, 0, 0, 0.1);
+  --text-primary: var(--brand-black);
+  --text-secondary: var(--brand-black);
+  --text-tertiary: var(--brand-black);
+  --accent: var(--brand-red);
+  --accent-hover: var(--brand-red-dark);
+  --accent-glow: rgba(227, 11, 23, 0.08);
+  --accent-glow-subtle: rgba(227, 11, 23, 0.04);
+  --glow-opacity: 0.06;
+  --scrollbar-track: #f0f0f0;
+  --scrollbar-thumb: var(--brand-gray-300);
+  --scrollbar-thumb-hover: var(--brand-gray-400);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-border: var(--surface-border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-glow: var(--accent-glow);
+  --color-accent-glow-subtle: var(--accent-glow-subtle);
+  --color-brand-red: var(--brand-red);
+  --color-brand-black: var(--brand-black);
+  --color-brand-white: var(--brand-white);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-arabic: var(--font-tajawal);
+}
+
+/* ─── Base Styles ─────────────────────────────────────────── */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-arabic), var(--font-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[dir="rtl"], [dir="rtl"] body {
+  font-family: var(--font-arabic), system-ui, -apple-system, sans-serif;
+}
+
+[dir="ltr"], [dir="ltr"] body {
+  font-family: var(--font-sans), var(--font-arabic), system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Selection ───────────────────────────────────────────── */
+
+::selection {
+  background: var(--brand-red);
+  color: var(--brand-white);
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Focus Styles ────────────────────────────────────────── */
+
+*:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ─── Theme Transition Helper ─────────────────────────────── */
+
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ─── Social Brand Icon Hover Effects ──────────────────────── */
+
+.instagram-icon-path {
+  fill: currentColor;
+  transition: fill 0.25s ease;
+}
+
+.group:hover .instagram-icon-path {
+  fill: url(#instagram-gradient);
+}
+
+.facebook-icon-path {
+  fill: currentColor;
+  transition: fill 0.25s ease;
+}
+
+.group:hover .facebook-icon-path {
+  fill: #1877f2;
+}
+
+/* ─── Printing Loader Animations ──────────────────────────── */
+
+@keyframes printerPaperFeed {
+  0% {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(22px);
+    opacity: 0.2;
+  }
+}
+
+@keyframes laserScan {
+  0%, 100% {
+    transform: translateX(-40px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(40px);
+    opacity: 1;
+  }
+}
+
+@keyframes ledBlink {
+  0%, 100% {
+    opacity: 0.4;
+    box-shadow: 0 0 4px #e30b17;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 14px #e30b17, 0 0 24px rgba(227, 11, 23, 0.6);
+  }
+}
+
+@keyframes inkDropGlow {
+  0%, 100% {
+    transform: scale(0.95);
+    filter: drop-shadow(0 0 6px rgba(227, 11, 23, 0.4));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 16px rgba(227, 11, 23, 0.9));
+  }
+}
+
+@keyframes progressBarIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(30%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-paper-feed {
+  animation: printerPaperFeed 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-laser-scan {
+  animation: laserScan 1.6s ease-in-out infinite;
+}
+
+.animate-led-blink {
+  animation: ledBlink 1.4s ease-in-out infinite;
+}
+
+.animate-ink-drop {
+  animation: inkDropGlow 2s ease-in-out infinite;
+}
+
+.animate-progress-indeterminate {
+  animation: progressBarIndeterminate 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
