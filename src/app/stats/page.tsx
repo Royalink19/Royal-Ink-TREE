@@ -33,7 +33,7 @@ interface TouchpointPreset {
   tag: string;
   titleAr: string;
   titleFr: string;
-  category: 'physical' | 'card' | 'social';
+  category: 'universal' | 'physical' | 'card' | 'social';
   categoryAr: string;
   placementAr: string;
   placementFr: string;
@@ -42,6 +42,17 @@ interface TouchpointPreset {
 
 // Known Presets for Touchpoint Links & QR Generation
 const PRESETS: TouchpointPreset[] = [
+  {
+    id: 'direct_universal',
+    tag: '',
+    titleAr: '🌐 الرابط المباشر العام (Direct Clean Link)',
+    titleFr: 'Lien Direct Universel (Sans Paramètre)',
+    category: 'universal',
+    categoryAr: 'رابط رسمي عام (شامل)',
+    placementAr: 'رابط نقي ومباشر تماماً بدون أي كود تتبع، يمكنك وضعه في أي مكان كبديل شامل (ستاند، كارت، واجهة، مراسلات).',
+    placementFr: 'Lien officiel propre sans tag ?source=, utilisable universellement sur n\'importe quel support.',
+    icon: '🌐',
+  },
   {
     id: 'stand_qr',
     tag: 'stand_qr',
@@ -182,9 +193,11 @@ export default function StatsDashboard() {
   }, [fetchStats]);
 
   // Compute Active Tag and URL
-  const activeTag = selectedPreset === 'custom' ? customTag || 'custom' : selectedPreset;
+  const activeTag = selectedPreset === 'custom' ? customTag || '' : selectedPreset;
   const currentBaseDomain = domain.trim() || 'https://royal-ink.com';
-  const targetUrl = `${currentBaseDomain}/connect?source=${encodeURIComponent(activeTag)}`;
+  const targetUrl = activeTag
+    ? `${currentBaseDomain}/connect?source=${encodeURIComponent(activeTag)}`
+    : `${currentBaseDomain}/connect`;
 
   // Generate QR Code
   useEffect(() => {
@@ -224,7 +237,7 @@ export default function StatsDashboard() {
     if (!qrDataUrl) return;
     const a = document.createElement('a');
     a.href = qrDataUrl;
-    a.download = `royal-ink-qr-${activeTag}.png`;
+    a.download = activeTag ? `royal-ink-qr-${activeTag}.png` : `royal-ink-qr-direct.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -445,13 +458,19 @@ export default function StatsDashboard() {
             {/* List of Touchpoint Cards */}
             <div className="space-y-3.5">
               {PRESETS.map((p) => {
-                const fullUrl = `${currentBaseDomain}/connect?source=${p.tag}`;
+                const fullUrl = p.tag
+                  ? `${currentBaseDomain}/connect?source=${p.tag}`
+                  : `${currentBaseDomain}/connect`;
                 const isCopied = copiedTag === p.id;
 
                 let categoryBadgeClass = isDark
                   ? 'bg-red-950/40 text-red-300 border-red-500/20'
                   : 'bg-red-50 text-red-700 border-red-200 font-semibold';
-                if (p.category === 'card') {
+                if (p.category === 'universal') {
+                  categoryBadgeClass = isDark
+                    ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/20'
+                    : 'bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold';
+                } else if (p.category === 'card') {
                   categoryBadgeClass = isDark
                     ? 'bg-amber-950/40 text-amber-300 border-amber-500/20'
                     : 'bg-amber-50 text-amber-800 border-amber-200 font-semibold';
