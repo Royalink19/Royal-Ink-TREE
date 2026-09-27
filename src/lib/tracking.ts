@@ -111,21 +111,46 @@ export function createTrackingEvent(
 export function trackPageView(source: TrafficSource): void {
   const event = createTrackingEvent('page_view', source);
 
-  // TODO: Replace with actual analytics integration
   if (process.env.NODE_ENV === 'development') {
     console.log('[Connect Hub] Page View:', event);
+  }
+
+  // Send to internal analytics API
+  if (typeof window !== 'undefined') {
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(event),
+      }).catch(() => {});
+    } catch {}
   }
 }
 
 /**
  * Track a link click event.
- * INTEGRATION POINT: Replace the console.log with your analytics call.
  */
 export function trackLinkClick(source: TrafficSource, linkId: string, url: string): void {
   const event = createTrackingEvent('link_click', source, { linkId, url });
 
-  // TODO: Replace with actual analytics integration
   if (process.env.NODE_ENV === 'development') {
     console.log('[Connect Hub] Link Click:', event);
+  }
+
+  // Send to internal analytics API (sendBeacon ensures completion during navigation)
+  if (typeof window !== 'undefined') {
+    try {
+      const payload = JSON.stringify(event);
+      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+        navigator.sendBeacon('/api/track', payload);
+      } else {
+        fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch {}
   }
 }
